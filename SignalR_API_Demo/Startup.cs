@@ -41,24 +41,25 @@ namespace SignalR_API_Demo
             string validIssuer = "https://www.testing.com";
 
             var authPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build();
+                .RequireAuthenticatedUser()
+                .Build();
 
             services.AddControllers();
 
             services.AddAuthorization(options =>
             {
-                //options.AddPolicy("NotificationSubscriber", policy =>
-                //{
-                //    policy.Requirements.Add(new NotificationSubscriberRequirement());
-                //});
+                options.AddPolicy("NotificationSubscriber", policy =>
+                {
+                    policy.Requirements.Add(new NotificationSubscriberRequirement());
+                });
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
+                  
                    //options.Authority = "https://localhost:44391/validate";
-                   options.TokenValidationParameters = new TokenValidationParameters
+                  options.TokenValidationParameters = new TokenValidationParameters
                   {
                       IssuerSigningKey = RSASecurityKey(publicKey),
                       RequireExpirationTime = true,
@@ -101,13 +102,7 @@ namespace SignalR_API_Demo
                 builder =>
                 {
                     builder.AllowAnyMethod().AllowAnyHeader()
-                           .WithOrigins("https://localhost:44301", 
-                                "http://localhost:64648",
-                                "http://localhost:5000",
-                                "https://localhost:5001",
-                                "http://localhost:3000", 
-                                "http://localhost:80", 
-                                "http://localhost:8080")
+                           .AllowAnyOrigin()
                            .AllowCredentials();
                 }));
 

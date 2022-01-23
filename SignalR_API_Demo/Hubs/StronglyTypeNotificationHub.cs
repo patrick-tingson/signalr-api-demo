@@ -10,12 +10,9 @@ using System.Threading.Tasks;
 
 namespace SignalR_API_Demo.Hubs
 {
-    //[Authorize("NotificationSubscriber")]
-    //[AuthorizeUser(Method = "signalr", Actions = new[] { Actions.get })]
     [Authorize]
     public class StronglyTypeNotificationHub : Hub<INotificationClient>
     {
-        //private static HashSet<string> ConnectedIds = new HashSet<string>();
         private static List<Subscriber> Subscribers = new List<Subscriber>();
 
         public override async Task OnConnectedAsync()
@@ -24,8 +21,6 @@ namespace SignalR_API_Demo.Hubs
             {
                 throw new HubException("403 (Forbidden)");
             }
-
-            //ConnectedIds.Add(Context.UserIdentifier);
 
             var subscriberData = Subscribers.FirstOrDefault(r => r.GlobalId == Context.UserIdentifier);
 
@@ -50,11 +45,6 @@ namespace SignalR_API_Demo.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            //if (ConnectedIds.Contains(Context.UserIdentifier))
-            //{
-            //    ConnectedIds.Remove(Context.UserIdentifier);
-            //}
-
             var subscriberData = Subscribers.FirstOrDefault(r => r.GlobalId == Context.UserIdentifier);
 
             if (subscriberData != null)
@@ -78,8 +68,6 @@ namespace SignalR_API_Demo.Hubs
         [HubMethodName("ClientMessageToAll")]
         public Task ClientMessage(string message)
         {
-            var x = Context;
-
             return Clients.All.ReceiveMessage(message);
         }
 
